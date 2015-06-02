@@ -1,47 +1,56 @@
+// tests passing: A, C, D, G
+
 var $ = function (selector) {
   var elements = [];
+  var parts;
 
   if (selector.includes("#")) {
-    idFinder(selector, elements);
+    parts = selector.replace("#", " #").split(" ");
+    idFinder(parts, elements);
   } else if (selector.includes(".")) {
-    classFinder(selector, elements);
+    parts = selector.replace(".", " .").split(" ");
+    classFinder(parts, elements);
+  } else if (selector.includes("#") && selector.includes(".")) {
+    parts = selector.replace("#", " #").replace(".", " .").split(" ");
   } else {
     tagFinder(selector, elements);
   }
 
   // console.log(elements);
   return elements;
-
-  var input = document.getElementById("")
-  console.log(input);
 }
 
-function idFinder(selector, elements) {
-  // answer to E, G
-  var i, parts, element;
+function idFinder(parts, elements) {
+  var elementId, element;
 
-  parts = selector.split(/#/);
+  // parts[0] must be div or nothing for the method to work
+  // if div, must be confronted with element retrieved
+  // if not, leave it alone
 
-  for (i = 0; i < parts.length; i++) {
-    element = document.getElementById(parts[i]);
-    
-    if (element && selector.includes(element.tagName.toLowerCase())) {
-      elements.push(element);
-    }
+  if (parts[0] !== "#" ) {
+    elementId = parts[1].replace("#", "");
+  } else {
+    elementId = parts[0].replace("#", "")
+  }
+
+  element = document.getElementById(elementId);
+
+  if (element) {
+    elements.push(element);
   }
 }
 
-function classFinder(selector, elements) {
-  // answer to D
-  var i, parts, elementsFound;
-
-  parts = selector.split(".");
-
-  for (i = 0; i < parts.length; i++) {
-    if(document.getElementsByClassName(parts[i])) {
-      elementsFound = document.getElementsByClassName(parts[i]);
-    }
+function classFinder(parts, elements) {
+  var elementsFound, elementClass;
+  
+  // same block of code here and in idFinder
+  if (parts[0] !== "." ) {
+    elementClass = parts[1].replace(".", "");
+  } else {
+    elementClass = parts[0].replace(".", "")
   }
+
+  elementsFound = document.getElementsByClassName(elementClass);
 
   for (i = 0; i < elementsFound.length; i++) {
     elements.push(elementsFound[i]);
@@ -49,7 +58,6 @@ function classFinder(selector, elements) {
 }
 
 function tagFinder(selector, elements) {
-  // answer to A
   var i, elementsFound;
 
   elementsFound = document.getElementsByTagName(selector);
