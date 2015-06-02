@@ -1,11 +1,18 @@
 var test$ = function() {
 window.answerList = {
+  // A: by tag
   A: $("div"),
+  // B: by tag and class
   B: $("img.some_class"),
+  // C: by id
   C: $("#some_id"),
+  // D: by class
   D: $(".some_class"),
+  // E: by tag and id
   E: $("input#some_id"),
+  // F: by tag, id and class
   F: $("div#some_id.some_class"),
+  // G: by tag, class and id
   G: $("div.some_class#some_id")
 }
 

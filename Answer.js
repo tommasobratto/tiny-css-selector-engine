@@ -3,6 +3,8 @@ var $ = function (selector) {
 
   if (selector.includes("#")) {
     idFinder(selector, elements);
+  } else if (selector.includes(".")) {
+    classFinder(selector, elements);
   } else {
     tagFinder(selector, elements);
   }
@@ -16,12 +18,30 @@ function idFinder(selector, elements) {
 
   parts = selector.split(/#/);
 
-  for (i = 0; i < parts.length; i++) {
-    element = document.getElementById(parts[i]);
+  if (selector.includes("div") || selector.includes("img")) {
+    for (i = 0; i < parts.length; i++) {
+        element = document.getElementById(parts[i]);
 
-    if (element) {
-      elements.push(element);
+      if (element) {
+        elements.push(element);
+      }
     }
+  }
+}
+
+function classFinder(selector, elements) {
+  var i, parts, elementsFound;
+
+  parts = selector.split(".");
+
+  for (i = 0; i < parts.length; i++) {
+    if(document.getElementsByClassName(parts[i])) {
+      elementsFound = document.getElementsByClassName(parts[i]);
+    }
+  }
+
+  for (i = 0; i < elementsFound.length; i++) {
+    elements.push(elementsFound[i]);
   }
 }
 
