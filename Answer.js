@@ -11,25 +11,28 @@ var $ = function (selector) {
 
   // console.log(elements);
   return elements;
+
+  var input = document.getElementById("")
+  console.log(input);
 }
 
 function idFinder(selector, elements) {
+  // answer to E, G
   var i, parts, element;
 
   parts = selector.split(/#/);
 
-  if (selector.includes("div") || selector.includes("img")) {
-    for (i = 0; i < parts.length; i++) {
-        element = document.getElementById(parts[i]);
-
-      if (element) {
-        elements.push(element);
-      }
+  for (i = 0; i < parts.length; i++) {
+    element = document.getElementById(parts[i]);
+    
+    if (element && selector.includes(element.tagName.toLowerCase())) {
+      elements.push(element);
     }
   }
 }
 
 function classFinder(selector, elements) {
+  // answer to D
   var i, parts, elementsFound;
 
   parts = selector.split(".");
