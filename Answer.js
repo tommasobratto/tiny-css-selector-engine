@@ -15,7 +15,6 @@ var $ = function (selector) {
     tagFinder(selector, elements);
   }
 
-  // console.log(elements);
   return elements;
 }
 
@@ -88,12 +87,29 @@ function elementFinder(parts, elements) {
       element = document.getElementById(parts[1].replace("#", ""));
       classElements = document.getElementsByClassName(parts[2].replace(".", ""));
 
+      if (element && classElements && element.tagName.toLowerCase() === parts[0]) {
+        checkIfElementSpecified(element, classElements, elements);
+      }
+    } else {
+      element = document.getElementById(parts[2].replace("#", ""));
+      classElements = document.getElementsByClassName(parts[1].replace(".", ""));
+
+      if (element && classElements && element.tagName.toLowerCase() === parts[0]) {
+        checkIfElementSpecified(element, classElements, elements);
+      }
+    }
+  } else {
+    if (parts[0][0] === "#") {
+      element = document.getElementById(parts[1].replace("#", ""));
+      classElements = document.getElementsByClassName(parts[2].replace(".", ""));
+
       if (element && classElements) {
         checkIfElementSpecified(element, classElements, elements);
       }
     } else {
       element = document.getElementById(parts[2].replace("#", ""));
       classElements = document.getElementsByClassName(parts[1].replace(".", ""));
+
       if (element && classElements) {
         checkIfElementSpecified(element, classElements, elements);
       }
@@ -108,4 +124,3 @@ function checkIfElementSpecified(element, classElements, elements) {
     }
   }
 }
-
