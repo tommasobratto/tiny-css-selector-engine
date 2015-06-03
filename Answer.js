@@ -3,6 +3,8 @@ var $ = function (selector) {
   var parts;
 
   if (selector.includes("#") && !selector.includes(".")) {
+    // Create whitespace around symbols, splitting the selector array
+    // into tokens using the newly created whitespace
     parts = selector.replace("#", " #").match(/\S+/g);
     idFinder(parts, elements);
   } else if (selector.includes(".") && !selector.includes("#")) {
@@ -15,39 +17,47 @@ var $ = function (selector) {
     tagFinder(selector, elements);
   }
 
+  console.log(elements);
   return elements;
 }
 
 
-// 1st function tier
+// 1st function tier: input scanner
 function idFinder(parts, elements) {
   var element;
 
+  // if first character isn't an id symbol,
+  // we have to check if the elements returned 
+  // have the same tag picked up by the input
   if (parts[0][0] !== "#") {
     element = getElementById(parts[1]);
 
-    if (element) {
-      elementHasId(element, parts[1]);
-    }
+    elementHasId(element, parts[1]);
   } else {
+    // else just get the element using its id
     element = getElementById(parts[0]);
 
-    if (element) {
-      elements.push(element);
-    }
+    elements.push(element);
   }
 }
 
 function classFinder(parts, elements) {
   var elementsFound;
 
+  // if first character isn't a symbol
   if (parts[0][0] !== ".") {
+    // case "class"
     elementsFound = getElementsByClass(parts[1]);
 
+    // we have to check if the elements returned have the same
+    // tag name as per input
     elementHasClass(elements, elementsFound, parts);
   } else {
+    // case "id"
     elementsFound = getElementsByClass(parts[0])
 
+    // just populating the "elements" array with each element of 
+    // the HTML collection
     for (i = 0; i < elementsFound.length; i++) {
       elements.push(elementsFound[i]);
     }
@@ -57,7 +67,9 @@ function classFinder(parts, elements) {
 function elementFinder(parts, elements) {
   var element, classElements;
 
+  // if first character isn't a symbol
   if (parts[0][0] !== "#" || parts[0][0] !== ".") {
+    // case: second character is id symbol
     if (parts[1][0] === "#") {
       element = getElementById(parts[1]);
       classElements = getElementsByClass(parts[2]);
@@ -66,6 +78,7 @@ function elementFinder(parts, elements) {
         checkIfElementSpecified(element, classElements, elements);
       }
     } else {
+      // case: second character is class symbol
       element = getElementById(parts[2]);
       classElements = getElementsByClass(parts[1]);
 
@@ -74,14 +87,15 @@ function elementFinder(parts, elements) {
       }
     }
   } else {
+    // if first character is a symbol
     if (parts[0][0] === "#") {
+      // and second character is id symbol
       element = getElementById(parts[1]);
       classElements = getElementsByClass(parts[2]);
 
-      if (element && classElements) {
-        checkIfElementSpecified(element, classElements, elements);
-      }
+      checkIfElementSpecified(element, classElements, elements);
     } else {
+      // or second character is class symbol
       element = getElementById(parts[1]);
       classElements = getElementsByClass(parts[2]);
 
@@ -101,7 +115,7 @@ function tagFinder(selector, elements) {
 }
 
 
-// 2nd function tier
+// 2nd function tier: DOM element getters
 function getElementById(value) {
   var elementId;
 
@@ -117,14 +131,18 @@ function getElementsByClass(value) {
 }
 
 
-// 3rd function tier
+// 3rd function tier: checks against input
 function elementHasId(element, parts) {
+  // check if the element found has the same tag
+  // as per input
   if (element.tagName === parts[0]) {
     elements.push(element);
   }
 }
 
 function elementHasClass(elements, elementsFound, parts) {
+  // as the previous one, it checks if the elements found have
+  // the same tag as per input
   for (i = 0; i < elementsFound.length; i++) {
     if (elementsFound[i].tagName === parts[0].toUpperCase()) {
       elements.push(elementsFound[i]);
@@ -133,6 +151,8 @@ function elementHasClass(elements, elementsFound, parts) {
 }
 
 function checkIfElementSpecified(element, classElements, elements) {
+  // this function matches the element found by id
+  // with the elements found using the class method
   for (i = 0; i < classElements.length; i++) {
     if (element.id === classElements[i].id) {
       elements.push(element);
