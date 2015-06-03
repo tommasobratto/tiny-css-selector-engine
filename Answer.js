@@ -10,7 +10,7 @@ var $ = function (selector) {
     classFinder(parts, elements);
   } else if (selector.includes("#") && selector.includes(".")) {
     parts = selector.replace("#", " #").replace(".", " .").match(/\S+/g);;
-    // third way: checks for a class and an id in the same selector
+    // here goes an "elementFinder()" function
   } else {
     tagFinder(selector, elements);
   }
@@ -34,12 +34,14 @@ function idFinder(parts, elements) {
   if (parts[0][0] !== "#") {
     elementId = parts[1].replace("#", "");
     element = document.getElementById(elementId);
+
     if (element) {
       elementHasId(element, parts);
     }
   } else {
     elementId = parts[0].replace("#", "");
     element = document.getElementById(elementId);
+
     if (element) {
       elements.push(element);
     }
@@ -52,7 +54,8 @@ function classFinder(parts, elements) {
   if (parts[0][0] !== ".") {
     elementClass = parts[1].replace(".", "");
     elementsFound = document.getElementsByClassName(elementClass);
-    elementHasClass(elementsFound, parts);
+    elementHasClass(elements, elementsFound, parts);
+    console.log(parts);
   } else {
     elementClass = parts[0].replace(".", "");
     elementsFound = document.getElementsByClassName(elementClass);
@@ -69,9 +72,9 @@ function elementHasId(element, parts) {
   }
 }
 
-function elementHasClass(elementsFound, parts) {
+function elementHasClass(elements, elementsFound, parts) {
   for (i = 0; i < elementsFound.length; i++) {
-    if(elementsFound[i].tagName === parts[0]) {
+    if(elementsFound[i].tagName.toLowerCase() === parts[0]) {
       elements.push(elementsFound[i]);
     }
   }
