@@ -32,7 +32,7 @@ function idFinder(parts, elements) {
   if (parts[0][0] !== "#") {
     element = getElementById(parts[1]);
 
-    elementHasId(element, parts[1]);
+    elementHasTag(element, parts[1]);
   } else {
     // else just get the element using its id
     element = getElementById(parts[0]);
@@ -51,7 +51,7 @@ function classFinder(parts, elements) {
 
     // we have to check if the elements returned have the same
     // tag name as per input
-    elementHasClass(elements, elementsFound, parts);
+    elementsHaveTag(elements, elementsFound, parts);
   } else {
     // case "id"
     elementsFound = getElementsByClass(parts[0])
@@ -75,7 +75,7 @@ function elementFinder(parts, elements) {
       classElements = getElementsByClass(parts[2]);
 
       if (element.tagName === parts[0].toUpperCase()) {
-        checkIfElementSpecified(element, classElements, elements);
+        matchElements(element, classElements, elements);
       }
     } else {
       // case: second character is class symbol
@@ -83,7 +83,7 @@ function elementFinder(parts, elements) {
       classElements = getElementsByClass(parts[1]);
 
       if (element.tagName === parts[0].toUpperCase()) {
-        checkIfElementSpecified(element, classElements, elements);
+        matchElements(element, classElements, elements);
       }
     }
   } else {
@@ -93,13 +93,13 @@ function elementFinder(parts, elements) {
       element = getElementById(parts[1]);
       classElements = getElementsByClass(parts[2]);
 
-      checkIfElementSpecified(element, classElements, elements);
+      matchElements(element, classElements, elements);
     } else {
       // or second character is class symbol
       element = getElementById(parts[1]);
       classElements = getElementsByClass(parts[2]);
 
-      checkIfElementSpecified(element, classElements, elements);
+      matchElements(element, classElements, elements);
     }
   }
 }
@@ -132,7 +132,7 @@ function getElementsByClass(value) {
 
 
 // 3rd function tier: checks against input
-function elementHasId(element, parts) {
+function elementHasTag(element, parts) {
   // check if the element found has the same tag
   // as per input
   if (element.tagName === parts[0]) {
@@ -140,7 +140,7 @@ function elementHasId(element, parts) {
   }
 }
 
-function elementHasClass(elements, elementsFound, parts) {
+function elementsHaveTag(elements, elementsFound, parts) {
   // as the previous one, it checks if the elements found have
   // the same tag as per input
   for (i = 0; i < elementsFound.length; i++) {
@@ -150,7 +150,7 @@ function elementHasClass(elements, elementsFound, parts) {
   }
 }
 
-function checkIfElementSpecified(element, classElements, elements) {
+function matchElements(element, classElements, elements) {
   // this function matches the element found by id
   // with the elements found using the class method
   for (i = 0; i < classElements.length; i++) {
