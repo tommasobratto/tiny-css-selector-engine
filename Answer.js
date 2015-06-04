@@ -16,6 +16,7 @@ var $ = function (selector) {
   } else if (selector.includes("#") && selector.includes(".")) {
 
     parts = selector.replace("#", " #").replace(".", " .").match(/\S+/g);;
+    elements = cssEngine.matchElement(parts);
 
   } else {
 
@@ -70,6 +71,21 @@ cssEngine = function() {
     return result;
   }
 
+  function matchElement(parts) {
+    var result = [];
+
+    var elementById = getElementById(parts)[0];
+    var elementsByClass = getElementsByClass(parts); 
+
+    result = [].slice.call(elementsByClass).filter(function(element) {
+      if (element.id === elementById.id) {
+        return element;
+      }
+    });
+
+    return result;
+  }
+
   function getTagName(parts) {
     tagName = parts.filter(function(token) {
       if (!token.includes("#") && !token.includes(".")) {
@@ -102,6 +118,7 @@ cssEngine = function() {
   return {
     getElementsByTag: getElementsByTag,
     getElementById: getElementById,
-    getElementsByClass: getElementsByClass
+    getElementsByClass: getElementsByClass,
+    matchElement: matchElement
   }
 }();
