@@ -1,149 +1,168 @@
 var $ = function (selector) {
   var elements = [];
   var parts;
+  var result;
 
   if (selector.includes("#") && !selector.includes(".")) {
 
     parts = selector.replace("#", " #").match(/\S+/g);
-    cssEngine.idFinder(parts, elements);
+    result = cssEngine.elementByIdFinder(parts);
+    elements.push(result);
 
   } else if (selector.includes(".") && !selector.includes("#")) {
 
     parts = selector.replace(".", " .").match(/\S+/g);
-    cssEngine.classFinder(parts, elements);
+    elements = cssEngine.elementByClassFinder(parts, elements);
 
   } else if (selector.includes("#") && selector.includes(".")) {
 
     parts = selector.replace("#", " #").replace(".", " .").match(/\S+/g);;
-    cssEngine.elementFinder(parts, elements);
+    elements = cssEngine.elementMatcher(parts);
 
   } else {
-    cssEngine.tagFinder(selector, elements);
+    elements = cssEngine.elementByTagFinder(selector);
   }
 
-  console.log(elements);
+  // console.log(elements);
   return elements;
 }
 
 cssEngine = function() {
-  function idFinder(parts, elements) {
-    var element;
 
-    if (parts[0][0] !== "#") {
-      element = getElementById(parts[1]);
+  function elementByIdFinder(parts) {
+    var element, result, firstToken, secondToken;
 
-      elementHasTag(element, parts[1]);
+    firstToken = parts[0];
+    secondToken = parts[1];
+
+    if (firstToken[0] !== "#") {
+      element = getElementById(secondToken);
+      result = elementHasTag(element, secondToken);
     } else {
-      element = getElementById(parts[0]);
-
-      elements.push(element);
+      element = getElementById(firstToken);
+      result = element;
     }
+    return result;
   }
 
-  function classFinder(parts, elements) {
+  function elementByClassFinder(parts) {
+    var elementsFound, result, firstToken, secondToken;
+
+    firstToken = parts[0];
+    secondToken = parts[1];
+
+    if (firstToken[0] !== ".") {
+      elementsFound = getElementsByClass(secondToken);
+
+      result = elementsHaveTag(elementsFound, firstToken);
+    } else {
+      elementsFound = getElementsByClass(firstToken);
+
+      result = [].slice.call(elementsFound);
+    }
+    return result;
+  }
+
+  function elementMatcher(parts) {
+    var element, classElements, result, firstToken, secondToken, thirdToken;
+
+    firstToken = parts[0];
+    secondToken = parts[1];
+    thirdToken = parts[2];
+
+    if (thirdToken) {
+      if (secondToken[0] === "#") {
+        element = getElementById(secondToken);
+        classElements = getElementsByClass(thirdToken);
+
+        if (element.tagName === firstToken.toUpperCase()) {
+          result = matchElements(element, classElements);
+        }
+      } else {
+        element = getElementById(thirdToken);
+        classElements = getElementsByClass(secondToken);
+
+        if (element.tagName === firstToken.toUpperCase()) {
+          result = matchElements(element, classElements);
+        }
+      }
+    } else {
+      if (firstToken === "#") {
+        element = getElementById(secondToken);
+        classElements = getElementsByClass(thirdToken);
+
+        result = matchElements(element, classElements);
+      } else {
+        element = getElementById(thirdToken);
+        classElements = getElementsByClass(secondToken);
+
+        result = matchElements(element, classElements);
+      }
+    }
+    return result;
+  }
+
+  function elementByTagFinder(selector) {
     var elementsFound;
-
-    if (parts[0][0] !== ".") {
-      elementsFound = getElementsByClass(parts[1]);
-
-      elementsHaveTag(elements, elementsFound, parts);
-    } else {
-      elementsFound = getElementsByClass(parts[0])
-
-      for (i = 0; i < elementsFound.length; i++) {
-        elements.push(elementsFound[i]);
-      }
-    }
-  }
-
-  function elementFinder(parts, elements) {
-    var element, classElements;
-
-    if (parts[0][0] !== "#" || parts[0][0] !== ".") {
-      if (parts[1][0] === "#") {
-        element = getElementById(parts[1]);
-        classElements = getElementsByClass(parts[2]);
-
-        if (element.tagName === parts[0].toUpperCase()) {
-          matchElements(element, classElements, elements);
-        }
-      } else {
-        element = getElementById(parts[2]);
-        classElements = getElementsByClass(parts[1]);
-
-        if (element.tagName === parts[0].toUpperCase()) {
-          matchElements(element, classElements, elements);
-        }
-      }
-    } else {
-      if (parts[0][0] === "#") {
-        element = getElementById(parts[1]);
-        classElements = getElementsByClass(parts[2]);
-
-        matchElements(element, classElements, elements);
-      } else {
-        element = getElementById(parts[1]);
-        classElements = getElementsByClass(parts[2]);
-
-        matchElements(element, classElements, elements);
-      }
-    }
-  }
-
-  function tagFinder(selector, elements) {
-    var i, elementsFound;
 
     elementsFound = document.getElementsByTagName(selector);
 
-    for (i = 0; i < elementsFound.length; i++) {
-      elements.push(elementsFound[i]);
-    }
+    return [].slice.call(elementsFound);
   }
 
 
 
-  function getElementById(value) {
+  function getElementById(token) {
     var elementId;
 
-    elementId = value.replace("#", "");
+    elementId = token.replace("#", "");
     return document.getElementById(elementId);
   }
 
-  function getElementsByClass(value) {
+  function getElementsByClass(token) {
     var elementClass;
 
-    elementClass = value.replace(".", "");
+    elementClass = token.replace(".", "");
     return document.getElementsByClassName(elementClass);
   }
 
 
 
-  function elementHasTag(element, parts) {
-    if (element.tagName === parts[0]) {
-      elements.push(element);
+  function elementHasTag(element, firstToken) {
+    if (element.tagName === firstToken.toUpperCase()) {
+      return element;
+    } else {
+      return [];
     }
   }
 
-  function elementsHaveTag(elements, elementsFound, parts) {
-    for (i = 0; i < elementsFound.length; i++) {
-      if (elementsFound[i].tagName === parts[0].toUpperCase()) {
-        elements.push(elementsFound[i]);
-      }
+  function elementsHaveTag(elementsFound, firstToken) {
+    filterByTag = function(element) {
+      if (element.tagName === firstToken.toUpperCase()) {
+        return element;
+      }    
     }
+
+    var filteredResult = [].slice.call(elementsFound).filter(filterByTag);
+      console.log(filteredResult);
+    return filteredResult;
   }
 
-  function matchElements(element, classElements, elements) {
-    for (i = 0; i < classElements.length; i++) {
-      if (element.id === classElements[i].id) {
-        elements.push(element);
+  function matchElements(element, classElements) {
+    filterById = function(classElement) {
+      if (classElement.id === element.id) {
+        return classElement;
       }
     }
+    var filteredResult = [].slice.call(classElements).filter(filterById);
+
+    return filteredResult;
   }
 
   return {
-    idFinder: idFinder,
-    classFinder: classFinder,
-    elementFinder: elementFinder,
-    tagFinder: tagFinder
+    elementByIdFinder: elementByIdFinder,
+    elementByClassFinder: elementByClassFinder,
+    elementMatcher: elementMatcher,
+    elementByTagFinder: elementByTagFinder
   }
 }();
