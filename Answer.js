@@ -12,7 +12,7 @@ var $ = function (selector) {
   } else if (selector.includes(".") && !selector.includes("#")) {
 
     parts = selector.replace(".", " .").match(/\S+/g);
-    elements = cssEngine.elementByClassFinder(parts, elements);
+    elements = cssEngine.elementByClassFinder(parts);
 
   } else if (selector.includes("#") && selector.includes(".")) {
 
