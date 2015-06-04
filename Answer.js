@@ -1,7 +1,6 @@
 var $ = function (selector) {
   var elements = [];
   var parts = [];
-  var result;
 
   if (selector.includes("#") && !selector.includes(".")) {
 
@@ -59,11 +58,7 @@ cssEngine = function() {
     var elementsFound = document.getElementsByClassName(className);
 
     if (tagName) {
-      result = [].slice.call(elementsFound).filter(function(element) {
-        if (element.tagName === tagName.toUpperCase()) {
-          return element;
-        }
-      });
+      result = [].slice.call(elementsFound).filter(filterByElementTag);
     } else {
       result = [].slice.call(elementsFound);
     }
@@ -87,33 +82,47 @@ cssEngine = function() {
   }
 
   function getTagName(parts) {
-    tagName = parts.filter(function(token) {
-      if (!token.includes("#") && !token.includes(".")) {
-        return token;
-      }
-    });
+    tagName = parts.filter(filterByTokenTag);
 
     return tagName[0];
   }
 
   function getIdName(parts) {
-    idName = parts.filter(function(token) {
-      if (token.includes("#")) {
-       return token;
-      }
-    });
+    idName = parts.filter(filterByIdSymbol);
 
     return idName[0].replace("#", "");
   }
 
   function getClassName(parts) {
-    className = parts.filter(function(token) {
-      if (token.includes(".")) {
-        return token;
-      }
-    });
+    className = parts.filter(filterByClassSymbol);
+    
     return className[0].replace(".", "");
   }
+
+  function filterByElementTag(element) {
+    if (element.tagName === tagName.toUpperCase()) {
+      return element;
+    }
+  }
+
+  function filterByIdSymbol(token) {
+    if (token.includes("#")) {
+      return token;
+    }
+  }
+
+  function filterByClassSymbol(token) {
+    if (token.includes(".")) {
+      return token;
+    }
+  }
+
+  function filterByTokenTag(token) {
+    if (!token.includes("#") && !token.includes(".")) {
+      return token;
+    }
+  }
+
 
   return {
     getElementsByTag: getElementsByTag,
