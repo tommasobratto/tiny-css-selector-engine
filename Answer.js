@@ -23,7 +23,6 @@ var $ = function (selector) {
     elements = cssEngine.getElementsByTag(parts);
   }
 
-  // console.log(elements);
   return elements;
 }
 
@@ -122,7 +121,6 @@ cssEngine = function() {
       return token;
     }
   }
-
 
   return {
     getElementsByTag: getElementsByTag,
