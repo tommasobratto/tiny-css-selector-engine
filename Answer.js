@@ -11,6 +11,7 @@ var $ = function (selector) {
   } else if (selector.includes(".") && !selector.includes("#")) {
 
     parts = selector.replace(".", " .").match(/\S+/g);
+    elements = cssEngine.getElementsByClass(parts);
 
   } else if (selector.includes("#") && selector.includes(".")) {
 
@@ -49,6 +50,26 @@ cssEngine = function() {
     return result;
   }
 
+  function getElementsByClass(parts) {
+    var result = [];
+    tagName = getTagName(parts);
+    className = getClassName(parts);
+
+    var elementsFound = document.getElementsByClassName(className);
+
+    if (tagName) {
+      result = [].slice.call(elementsFound).filter(function(element) {
+        if (element.tagName === tagName.toUpperCase()) {
+          return element;
+        }
+      });
+    } else {
+      result = [].slice.call(elementsFound);
+    }
+
+    return result;
+  }
+
   function getTagName(parts) {
     tagName = parts.filter(function(token) {
       if (!token.includes("#") && !token.includes(".")) {
@@ -75,11 +96,12 @@ cssEngine = function() {
         return token;
       }
     });
-    return className;
+    return className[0].replace(".", "");
   }
 
   return {
     getElementsByTag: getElementsByTag,
-    getElementById: getElementById
+    getElementById: getElementById,
+    getElementsByClass: getElementsByClass
   }
 }();
