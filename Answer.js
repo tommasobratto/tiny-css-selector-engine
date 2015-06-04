@@ -45,7 +45,7 @@ cssEngine = function() {
 
     var element = document.getElementById(idName);
 
-    if (!tagName || (tagName.toUpperCase() === element.tagName)) {
+    if (!tagName || tagName.toUpperCase() === element.tagName) {
       result.push(element);
     }
     return result;
