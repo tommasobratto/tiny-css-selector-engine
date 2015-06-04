@@ -23,7 +23,6 @@ var $ = function (selector) {
     elements = cssEngine.elementByTagFinder(selector);
   }
 
-  // console.log(elements);
   return elements;
 }
 
@@ -144,7 +143,6 @@ cssEngine = function() {
     }
 
     var filteredResult = [].slice.call(elementsFound).filter(filterByTag);
-      console.log(filteredResult);
     return filteredResult;
   }
 
